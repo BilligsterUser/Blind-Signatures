@@ -1,0 +1,10 @@
+
+test:edge-buster-slim:
+  image: node:latest
+#   cache:
+#     paths:
+#       - node_modules/
+  script:
+    - npm install
+    - npx jest --coverage --verbose --passWithNoTests --no-cache
+    - npx tsc
