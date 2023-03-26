@@ -33,13 +33,19 @@ Please run npm run test to see the code in action!
 
 https://youtu.be/BH1gE2oFrxQ
 
+
+
 ## Progress
 
-- [ ] NUT 00
-- [X] NUT 01
-- [X] NUT 02
-- [ ] NUT 03
-- [ ] NUT 04
-- [ ] NUT 05
-- [ ] NUT 06
+https://github.com/cashubtc/cashu/blob/main/docs/specs/README.md
 
+
+| Number   | Description                                                 |  |
+|----------|-------------------------------------------------------------|---------|
+| [00] | Notation and Models                          |
+| [01] | Mint public keys                           | ✅
+| [02] | Keysets and keyset IDs                           | ✅
+| [03] | Requesting a mint                           |
+| [04] | Mint tokens                           |
+| [05] | Melt tokens                           |
+| [06] | Split tokens                           |

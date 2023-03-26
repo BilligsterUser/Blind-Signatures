@@ -37,18 +37,6 @@
 		"verbose": true,
 		"resolver": "ts-jest-resolver",
 		"collectCoverage": true,
-		"collectCoverageFrom": [
-			"**/*.{js,jsx,ts,tsx}",
-			"!**/node_modules/**",
-			"!**/vendor/**",
-			"!**/setup/**",
-			"!**/dist/**",
-			"!**/coverage/**"
-		],
-		"coverageReporters": [
-			"text",
-			"text-summary"
-		],
 		"transform": {
 			"^.+\\.tsx?$": "ts-jest"
 		},
