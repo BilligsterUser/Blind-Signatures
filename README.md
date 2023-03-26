@@ -36,6 +36,7 @@ https://youtu.be/BH1gE2oFrxQ
 
 
 ## Progress
+
 https://github.com/cashubtc/cashu/blob/main/docs/specs/README.md
 
 
