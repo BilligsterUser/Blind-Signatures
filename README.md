@@ -1,5 +1,7 @@
 # Blind Signatures
 
+[![codecov](https://codecov.io/github/BilligsterUser/Blind-Signatures/branch/main/graph/badge.svg?token=VEr2pUyLw5)](https://codecov.io/github/BilligsterUser/Blind-Signatures)
+
 big thanks to Tim Bouma [@trbouma](https://github.com/trbouma)
 
 
