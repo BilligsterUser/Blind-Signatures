@@ -1,4 +1,4 @@
-Blind Signatures
+# Blind Signatures
 
 big thanks to Tim Bouma [@trbouma](https://github.com/trbouma)
 
