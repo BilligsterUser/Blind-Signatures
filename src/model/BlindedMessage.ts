@@ -7,9 +7,9 @@ import { PrivateKey } from './PrivateKey'
 
 export class BlindedMessage {
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	public static newBlindedMessage(amount: number, secret: Uint8Array): { B_: ProjPointType<bigint>; blindedMessage: BlindedMessage; }
+	public static newBlindedMessage(amount: number, secret?: Uint8Array): { B_: ProjPointType<bigint>; blindedMessage: BlindedMessage; }
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	public static newBlindedMessage(amount: number, secret: string): { B_: ProjPointType<bigint>; blindedMessage: BlindedMessage; }
+	public static newBlindedMessage(amount: number, secret?: string): { B_: ProjPointType<bigint>; blindedMessage: BlindedMessage; }
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	public static newBlindedMessage(amount: number, secret?: string | Uint8Array): { B_: ProjPointType<bigint>; blindedMessage: BlindedMessage; } {
 		if (!secret) {
@@ -27,7 +27,7 @@ export class BlindedMessage {
 	constructor(private _secret: Uint8Array, private _r: PrivateKey, private _amount: number) { }
 	public blind() {
 		const Y = secp256k1.ProjectivePoint.fromAffine(hashToCurve(this._secret).toAffine())
-		const r = new PrivateKey()
+		const r = this._r
 		const T = Y.add(secp256k1.ProjectivePoint.BASE.multiply(r.toBigInt())) // blindedMessage
 		return T
 	}
@@ -35,7 +35,7 @@ export class BlindedMessage {
 		// eslint-disable-next-line @typescript-eslint/naming-convention
 		const B_ = this.blind()
 		// eslint-disable-next-line @typescript-eslint/naming-convention
-		return { amount: this._amount, B_ }
+		return { amount: this._amount, B_:B_.toHex(true) }
 	}
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	public unblind(C: ProjPointType<bigint>, pubKey: ProjPointType<bigint>) {
