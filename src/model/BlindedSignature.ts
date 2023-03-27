@@ -1,6 +1,5 @@
 import { ProjPointType } from '@noble/curves/abstract/weierstrass'
-import { ISerializedBlindedSignature } from '.'
-import { PrivateKey } from './PrivateKey'
+import { IBlindedSignatureParam, ISerializedBlindedSignature } from '.'
 
 export class BlindedSignature {
 	#amount: number
@@ -9,9 +8,9 @@ export class BlindedSignature {
 	#id: string
 
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	get C_(){return this.#C_}
+	get C_() { return this.#C_ }
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	public static newBlindedSignature(id: string, amount: number, B_: ProjPointType<bigint>, privateKey: PrivateKey) {
+	public static newBlindedSignature({ id = '', amount = 0, B_, privateKey }: IBlindedSignatureParam) {
 		return new BlindedSignature(id, amount, B_.multiply(privateKey.toBigInt()))
 	}
 	// eslint-disable-next-line @typescript-eslint/naming-convention
@@ -20,7 +19,7 @@ export class BlindedSignature {
 		this.#amount = amount
 		this.#C_ = C_
 	}
-	public serialize(): ISerializedBlindedSignature{
+	public toJSON(): ISerializedBlindedSignature {
 		// eslint-disable-next-line @typescript-eslint/naming-convention
 		return { id: this.#id, amount: this.#amount, C_: this.#C_.toHex(true) }
 	}

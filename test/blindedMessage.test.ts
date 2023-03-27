@@ -2,29 +2,39 @@ import { BlindedMessage, Mint, PrivateKey } from '../src'
 
 
 describe('test crypto bdhke', () => {
-	test('test', async() => {
+	test('test BlindedMessage from string', async() => {
+		// mint
 		const mint = new Mint(new PrivateKey())
-		const { B_, blindedMessage } = BlindedMessage.newBlindedMessage(1, 'xxxx')
-		const bs = mint.createBlindSignature('', 1, B_)
-		const { C } = blindedMessage.unblind(bs.C_, mint.privateKey.getPublicKey())
+		// alice
+		const bm = BlindedMessage.newBlindedMessage({secret:'xxxx'})
+		// mint
+		const bs = mint.createBlindSignature({ B_: bm.B_ })
+		// alice
+		const { C } = bm.unblind(bs.C_, mint.privateKey.getPublicKey())
 
-		expect(mint.verify(blindedMessage.r, C))
+		expect(mint.verify(bm.r, C))
 	})
 	test('test crypto', () => {
 		// mint
 		const mint = new Mint(new PrivateKey())
 		// alice
-		const bm = BlindedMessage.newBlindedMessage(1)  // blindedMessage
-		const B_ = bm.blindedMessage.blind()
+		const bm = BlindedMessage.newBlindedMessage({amount:1})  // blindedMessage
+		const B_ = bm.blind()
 
 		expect(B_.toHex(true)).toBe(bm.B_.toHex(true))
-		expect(bm.blindedMessage.serialize()).toStrictEqual({ amount: 1, B_: B_.toHex(true) })
+		expect(bm.toJSON()).toStrictEqual({ amount: 1, B_: B_.toHex(true) })
 
 		// mint
-		const bs = mint.createBlindSignature('', 1, B_)// BlindedSignature
+		const bs = mint.createBlindSignature({B_})// BlindedSignature
 		// alice
-		const ub = bm.blindedMessage.unblind(bs.C_, mint.privateKey.getPublicKey()) // unblinded
+		const ub = bm.unblind(bs.C_, mint.privateKey.getPublicKey()) // unblinded
 		// mint proof
-		expect(mint.verify(bm.blindedMessage.r, ub.C))
+		expect(mint.verify(bm.r, ub.C))
+	})
+	test('test toJSON', () => {
+		const bm = BlindedMessage.newBlindedMessage({amount:1})  // blindedMessage
+		const str = JSON.stringify(bm)
+		expect(str).toEqual(JSON.stringify({ amount: 1, B_: bm.B_.toHex(true) }))
+		expect(bm.toJSON()).toStrictEqual({ amount: 1, B_: bm.B_.toHex(true) })
 	})
 })

@@ -7,15 +7,15 @@ test('test crypto', () => {
 	const mint = new Mint(new PrivateKey())
 
 	// alice
-	const bm = BlindedMessage.newBlindedMessage(1, randomBytes(10))  // blindedMessage
+	const bm = BlindedMessage.newBlindedMessage({secret:randomBytes(10)})  // blindedMessage
 	// mint
-	const bs = mint.createBlindSignature('', 1, bm.B_)// BlindedSignature
+	const bs = mint.createBlindSignature({B_:bm.B_})// BlindedSignature
 
 	// alice
-	const ub = bm.blindedMessage.unblind(bs.C_, mint.privateKey.getPublicKey()) // unblinded
+	const ub = bm.unblind(bs.C_, mint.privateKey.getPublicKey()) // unblinded
 
 	// mint proof
-	expect(mint.verify(bm.blindedMessage.r, ub.C))
+	expect(mint.verify(bm.r, ub.C))
 })
 
 test('test crypto simple', () => {

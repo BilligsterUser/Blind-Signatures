@@ -2,17 +2,13 @@
 import { ProjPointType } from '@noble/curves/abstract/weierstrass'
 import { hashToCurve, secp256k1 } from '@noble/curves/secp256k1'
 import { randomBytes } from 'crypto'
-import { ISerializedBlindedMessage } from '.'
+import { IBlindedMessageParam, ISerializedBlindedMessage } from '.'
 import { PrivateKey } from './PrivateKey'
 
 
 export class BlindedMessage {
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	public static newBlindedMessage(amount: number, secret?: Uint8Array): { B_: ProjPointType<bigint>; blindedMessage: BlindedMessage; }
-	// eslint-disable-next-line @typescript-eslint/naming-convention
-	public static newBlindedMessage(amount: number, secret?: string): { B_: ProjPointType<bigint>; blindedMessage: BlindedMessage; }
-	// eslint-disable-next-line @typescript-eslint/naming-convention
-	public static newBlindedMessage(amount: number, secret?: string | Uint8Array): { B_: ProjPointType<bigint>; blindedMessage: BlindedMessage; } {
+	public static newBlindedMessage({ amount = 0, secret }: IBlindedMessageParam = {}): BlindedMessage {
 		if (!secret) {
 			secret = randomBytes(10)
 		} else if (typeof secret === 'string') {
@@ -22,25 +18,39 @@ export class BlindedMessage {
 		const r = new PrivateKey()
 		const T = Y.add(secp256k1.ProjectivePoint.BASE.multiply(r.toBigInt())) // blindedMessage
 		// eslint-disable-next-line @typescript-eslint/naming-convention
-		return { B_: T, blindedMessage: new BlindedMessage(secret, r, amount) }
+		return new BlindedMessage({ secret, r, amount, B_: T })
 	}
-	get r() { return this._r }
-	constructor(private _secret: Uint8Array, private _r: PrivateKey, private _amount: number) { }
+	#amount: number
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	#B_: ProjPointType<bigint>
+	#r: PrivateKey
+	#secret: Uint8Array
+	get r() { return this.#r }
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	get B_() { return this.#B_ }
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	private constructor({ amount, B_, r, secret }: Required<IBlindedMessageParam>) {
+		this.#amount = amount
+		this.#B_ = B_
+		this.#r = r
+		if (typeof secret === 'string') { secret = new TextEncoder().encode(secret) }
+		this.#secret = secret
+	}
 	public blind() {
-		const Y = secp256k1.ProjectivePoint.fromAffine(hashToCurve(this._secret).toAffine())
-		const r = this._r
+		const Y = secp256k1.ProjectivePoint.fromAffine(hashToCurve(this.#secret).toAffine())
+		const r = this.#r
 		const T = Y.add(secp256k1.ProjectivePoint.BASE.multiply(r.toBigInt())) // blindedMessage
 		return T
 	}
-	public serialize(): ISerializedBlindedMessage{
+	public toJSON(): ISerializedBlindedMessage {
 		// eslint-disable-next-line @typescript-eslint/naming-convention
 		const B_ = this.blind()
 		// eslint-disable-next-line @typescript-eslint/naming-convention
-		return { amount: this._amount, B_:B_.toHex(true) }
+		return { amount: this.#amount, B_: B_.toHex(true) }
 	}
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	public unblind(C: ProjPointType<bigint>, pubKey: ProjPointType<bigint>) {
 		// eslint-disable-next-line @typescript-eslint/naming-convention
-		return { C: C.subtract(pubKey.multiply(this._r.toBigInt())), secret: this._secret }
+		return { C: C.subtract(pubKey.multiply(this.#r.toBigInt())), secret: this.#secret }
 	}
 }

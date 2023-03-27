@@ -1,13 +1,30 @@
+import { ProjPointType } from '@noble/curves/abstract/weierstrass'
+import { PrivateKey } from './PrivateKey'
+
 export interface ISerializedBlindedSignature {
 	amount: number,
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	C_: string,
 	id?: string
 }
+export interface IBlindedSignatureParam{
+	amount?: number,
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	B_: ProjPointType<bigint>,
+	id?: string,
+	privateKey: PrivateKey
+}
 export interface ISerializedBlindedMessage {
 	amount: number,
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	B_: string
+}
+export interface IBlindedMessageParam{
+	amount?: number,
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	B_?: ProjPointType<bigint>
+	r?: PrivateKey
+	secret?: string | Uint8Array
 }
 export interface IProof {
 	amount: number,

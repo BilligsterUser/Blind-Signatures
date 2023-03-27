@@ -1,5 +1,6 @@
 import { ProjPointType } from '@noble/curves/abstract/weierstrass'
 import { hashToCurve } from '@noble/curves/secp256k1'
+import { IBlindedSignatureParam } from '.'
 import { BlindedSignature } from './BlindedSignature'
 import { Keyset } from './Keyset'
 import { PrivateKey } from './PrivateKey'
@@ -12,8 +13,9 @@ export class Mint {
 		this.#keyset = new Keyset(this.#privateKey.getPrivateKey().toString(), derivationPath)
 	}
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	public createBlindSignature(id: string, amount: number, B_: ProjPointType<bigint>) {
-		return BlindedSignature.newBlindedSignature(id, amount, B_, this.#privateKey)
+	public createBlindSignature({ id = '', amount = 0, B_ }: Omit<IBlindedSignatureParam, 'privateKey'>) {
+		// eslint-disable-next-line @typescript-eslint/naming-convention
+		return BlindedSignature.newBlindedSignature({id, amount, B_, privateKey: this.#privateKey})
 	}
 	// GET /keys
 	public getKeys() { return this.#keyset.getKeys() }
