@@ -21,8 +21,15 @@ export interface IMint {
 	ids: string[]
 	url: string,
 }
+// https://github.com/cashubtc/nuts/blob/main/00.md#021---v1-tokens
 export type TokenV1 = IProof[]
+// https://github.com/cashubtc/nuts/blob/main/00.md#022---v2-tokens
 export interface ITokenV2 {
 	mints: IMint[]
 	proofs: IProof[]
+}
+// https://github.com/cashubtc/nuts/blob/main/00.md#023---v3-tokens
+export interface ITokenV3 {
+	memo?: string
+	token: { mint: string, proofs: IProof[] }[]
 }
