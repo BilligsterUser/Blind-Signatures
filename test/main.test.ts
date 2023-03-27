@@ -9,10 +9,10 @@ test('test crypto', () => {
 	// alice
 	const bm = BlindedMessage.newBlindedMessage(1, randomBytes(10))  // blindedMessage
 	// mint
-	const bs = mint.createBlindSignature(bm.B_)// BlindedSignature
+	const bs = mint.createBlindSignature('', 1, bm.B_)// BlindedSignature
 
 	// alice
-	const ub = bm.blindedMessage.unblind(bs, mint.privateKey.getPublicKey()) // unblinded
+	const ub = bm.blindedMessage.unblind(bs.C_, mint.privateKey.getPublicKey()) // unblinded
 
 	// mint proof
 	expect(mint.verify(bm.blindedMessage.r, ub.C))

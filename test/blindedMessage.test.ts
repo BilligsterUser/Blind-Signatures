@@ -2,11 +2,11 @@ import { BlindedMessage, Mint, PrivateKey } from '../src'
 
 
 describe('test crypto bdhke', () => {
-	test('test', async () => {
+	test('test', async() => {
 		const mint = new Mint(new PrivateKey())
 		const { B_, blindedMessage } = BlindedMessage.newBlindedMessage(1, 'xxxx')
-		const C_ = mint.createBlindSignature(B_)
-		const { C } = blindedMessage.unblind(C_, mint.privateKey.getPublicKey())
+		const bs = mint.createBlindSignature('', 1, B_)
+		const { C } = blindedMessage.unblind(bs.C_, mint.privateKey.getPublicKey())
 
 		expect(mint.verify(blindedMessage.r, C))
 	})
@@ -21,9 +21,9 @@ describe('test crypto bdhke', () => {
 		expect(bm.blindedMessage.serialize()).toStrictEqual({ amount: 1, B_: B_.toHex(true) })
 
 		// mint
-		const bs = mint.createBlindSignature(B_)// BlindedSignature
+		const bs = mint.createBlindSignature('', 1, B_)// BlindedSignature
 		// alice
-		const ub = bm.blindedMessage.unblind(bs, mint.privateKey.getPublicKey()) // unblinded
+		const ub = bm.blindedMessage.unblind(bs.C_, mint.privateKey.getPublicKey()) // unblinded
 		// mint proof
 		expect(mint.verify(bm.blindedMessage.r, ub.C))
 	})
