@@ -1,4 +1,4 @@
-import { H2CPoint } from '@noble/curves/abstract/hash-to-curve'
+import { ProjPointType } from '@noble/curves/abstract/weierstrass'
 import { hashToCurve } from '@noble/curves/secp256k1'
 import { Keyset } from './Keyset'
 import { PrivateKey } from './PrivateKey'
@@ -11,10 +11,11 @@ export class Mint {
 		this.#privateKey = privateKey
 		this.#keyset = new Keyset(this.#privateKey.getPrivateKey().toString(), derivationPath)
 	}
-	public createBlindSignature(B_: H2CPoint<bigint>): H2CPoint<bigint> {
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	public createBlindSignature(B_: ProjPointType<bigint>): ProjPointType<bigint> {
 		return B_.multiply(this.#privateKey.toBigInt())
 	}
-	public verify(r: PrivateKey, unblinded: H2CPoint<bigint>) {
+	public verify(r: PrivateKey, unblinded: ProjPointType<bigint>) {
 		return hashToCurve(r.getPrivateKey()).multiply(this.#privateKey.toBigInt()).equals(unblinded)
 	}
 	get privateKey() { return this.#privateKey }

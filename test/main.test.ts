@@ -7,7 +7,7 @@ test('test crypto', () => {
 	const mint = new Mint(new PrivateKey())
 
 	// alice
-	const bm = BlindedMessage.newBlindedMessage(randomBytes(10))  // blindedMessage
+	const bm = BlindedMessage.newBlindedMessage(1, randomBytes(10))  // blindedMessage
 	// mint
 	const bs = mint.createBlindSignature(bm.B_)// BlindedSignature
 
