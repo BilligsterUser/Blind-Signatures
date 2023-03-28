@@ -6,6 +6,25 @@
 
 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/CashuBTC)
 
+
+## Progress
+
+https://github.com/cashubtc/nuts/tree/main
+
+
+| Number   | Description                                                 |  |
+|----------|-------------------------------------------------------------|---------|
+| [00](https://github.com/cashubtc/nuts/blob/main/00.md) | Notation and Models | ✅
+| [01](https://github.com/cashubtc/nuts/blob/main/01.md) | Mint public keys | ✅
+| [02](https://github.com/cashubtc/nuts/blob/main/02.md) | Keysets and keyset IDs | ✅
+| [03](https://github.com/cashubtc/nuts/blob/main/03.md) | Requesting a mint | ✅
+| [04](https://github.com/cashubtc/nuts/blob/main/04.md) | Mint tokens |
+| [05](https://github.com/cashubtc/nuts/blob/main/05.md) | Melt tokens |
+| [06](https://github.com/cashubtc/nuts/blob/main/06.md) | Split tokens |
+
+
+
+
 big thanks to Tim Bouma [@trbouma](https://github.com/trbouma)
 
 
@@ -30,6 +49,7 @@ A minimal implementation https://github.com/phyro/minicash
 And, finally, Cashu, a Chaumian Ecash wallet and mint with Bitcoin Lightning support
 
 https://github.com/callebtc/cashu
+https://github.com/cashubtc/nuts
 
 This repo implementation is based on this spec:
 
@@ -40,18 +60,3 @@ Please run npm run test to see the code in action!
 https://youtu.be/BH1gE2oFrxQ
 
 
-
-## Progress
-
-https://github.com/cashubtc/cashu/blob/main/docs/specs/README.md
-
-
-| Number   | Description                                                 |  |
-|----------|-------------------------------------------------------------|---------|
-| [00] | Notation and Models                          | ✅
-| [01] | Mint public keys                           | ✅
-| [02] | Keysets and keyset IDs                           | ✅
-| [03] | Requesting a mint                           | ✅
-| [04] | Mint tokens                           |
-| [05] | Melt tokens                           |
-| [06] | Split tokens                           |
