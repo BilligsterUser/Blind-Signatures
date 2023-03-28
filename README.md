@@ -51,7 +51,7 @@ https://github.com/cashubtc/cashu/blob/main/docs/specs/README.md
 | [00] | Notation and Models                          | ✅
 | [01] | Mint public keys                           | ✅
 | [02] | Keysets and keyset IDs                           | ✅
-| [03] | Requesting a mint                           |
+| [03] | Requesting a mint                           | ✅
 | [04] | Mint tokens                           |
 | [05] | Melt tokens                           |
 | [06] | Split tokens                           |

@@ -50,3 +50,8 @@ export interface ITokenV3 {
 	memo?: string
 	token: { mint: string, proofs: IProof[] }[]
 }
+// Create Invoice
+export interface IRequestMintResp{
+	hash: string
+	pr: string,
+}
