@@ -6,6 +6,17 @@
 
 [![chatroom icon](https://patrolavia.github.io/telegram-badge/chat.png)](https://t.me/CashuBTC)
 
+:warning: Disclaimer :warning:
+
+This project is in its early stages and is not recommended for use at this time.
+
+Please be aware that there may be bugs, errors, and incomplete features that could cause unexpected behavior or loss of data. We do not assume any liability for any issues that may arise from using this project.
+
+We strongly encourage users to exercise caution and only use this project for experimental or educational purposes.
+
+We appreciate your interest in this project and will continue to work on improving it. Thank you for your understanding.
+
+*:warning: Disclaimer :warning:: The author is NOT a cryptographer and this work has not been reviewed. This means that there is very likely a fatal flaw somewhere. Cashu is still experimental.*
 
 ## Progress
 
