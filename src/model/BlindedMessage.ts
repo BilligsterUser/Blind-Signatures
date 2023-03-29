@@ -3,14 +3,19 @@ import { ProjPointType } from '@noble/curves/abstract/weierstrass'
 import { hashToCurve, secp256k1 } from '@noble/curves/secp256k1'
 import { randomBytes } from 'crypto'
 import { IBlindedMessageParam, ISerializedBlindedMessage } from '.'
+import { splitAmount } from '../utils'
 import { PrivateKey } from './PrivateKey'
 
 
 export class BlindedMessage {
+	public static newBlindedMessages(amount: number): BlindedMessage[] {
+		return splitAmount(amount)
+			.map(x => BlindedMessage.newBlindedMessage({ amount: x }))
+	}
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	public static newBlindedMessage({ amount = 0, secret }: IBlindedMessageParam = {}): BlindedMessage {
 		if (!secret) {
-			secret = randomBytes(10)
+			secret = randomBytes(32)
 		} else if (typeof secret === 'string') {
 			secret = new TextEncoder().encode(secret)
 		}
@@ -28,6 +33,7 @@ export class BlindedMessage {
 	get r() { return this.#r }
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	get B_() { return this.#B_ }
+	get amount() { return this.#amount }
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	private constructor({ amount, B_, r, secret }: Required<IBlindedMessageParam>) {
 		this.#amount = amount

@@ -28,7 +28,7 @@ https://github.com/cashubtc/nuts/tree/main
 big thanks to Tim Bouma [@trbouma](https://github.com/trbouma)
 
 
-This code in this repl is based on prior work and is intended to help in the understandng of blind signatures, which is the 'secret sauce' of Chaumian mints. The basic gist of the protocol is that the mint signs a secret value, which it cannot see. When this secret value is presented later on, the mint can confirm that it actually signed this secret value.
+This code in this repo is based on prior work and is intended to help in the understandng of blind signatures, which is the 'secret sauce' of Chaumian mints. The basic gist of the protocol is that the mint signs a secret value, which it cannot see. When this secret value is presented later on, the mint can confirm that it actually signed this secret value.
 
 Protocol aside, the hardest thing to understand is how this scheme is actually useful, especially when the mint can't actually see what is being signed.
 

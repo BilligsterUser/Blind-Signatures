@@ -9,6 +9,7 @@ export class BlindedSignature {
 
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	get C_() { return this.#C_ }
+	get amount(){return this.#amount}
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	public static newBlindedSignature({ id = '', amount = 0, B_, privateKey }: IBlindedSignatureParam) {
 		return new BlindedSignature(id, amount, B_.multiply(privateKey.toBigInt()))
