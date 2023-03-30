@@ -14,7 +14,7 @@ export class Mint {
 	readonly #invoicer: IInvoicer
 	constructor(privateKey: PrivateKey, derivationPath = '0/0/0/0', invoicer = FakeInvoicer) {
 		this.#privateKey = privateKey
-		this.#keyset = new Keyset(this.#privateKey.getPrivateKey().toString(), derivationPath)
+		this.#keyset = new Keyset(this.#privateKey.key.toString(), derivationPath)
 		// eslint-disable-next-line new-cap
 		this.#invoicer = new invoicer()
 	}
@@ -52,6 +52,6 @@ export class Mint {
 		return this.#invoicer.createInvoice(amount)
 	}
 	public verify(r: PrivateKey, unblinded: ProjPointType<bigint>) {
-		return hashToCurve(r.getPrivateKey()).multiply(this.#privateKey.toBigInt()).equals(unblinded)
+		return hashToCurve(r.key).multiply(this.#privateKey.toBigInt()).equals(unblinded)
 	}
 }
