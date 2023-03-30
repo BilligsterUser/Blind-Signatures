@@ -10,7 +10,7 @@ describe('Mint', () => {
 	})
 	test('test mint mintTokens', () => {
 		const blindedMessages = BlindedMessage.newBlindedMessages(1)
-		const mintTokensResp = mint.mintTokens(1, '', blindedMessages)
+		const mintTokensResp = mint.mintTokens('0000', blindedMessages)
 		expect(mintTokensResp.promises).toHaveLength(1)
 		expect(mintTokensResp.promises.reduce((r, cur) => r + cur.amount, 0)).toBe(1)
 		const C_ = pointFromHex(mintTokensResp.promises[0].C_)
