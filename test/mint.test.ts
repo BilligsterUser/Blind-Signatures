@@ -1,4 +1,5 @@
 import { BlindedMessage, Mint, PrivateKey } from '../src/index.js'
+import { pointFromHex } from '../src/utils/index.js'
 
 describe('Mint', () => {
 	const mint = new Mint(new PrivateKey())
@@ -8,9 +9,13 @@ describe('Mint', () => {
 		expect(mint.isPaid(requestMintResp.hash)).toBe(true)
 	})
 	test('test mint mintTokens', () => {
-		const mintTokensResp = mint.mintTokens(1,'',BlindedMessage.newBlindedMessages(1))
+		const blindedMessages = BlindedMessage.newBlindedMessages(1)
+		const mintTokensResp = mint.mintTokens(1, '', blindedMessages)
 		expect(mintTokensResp.promises).toHaveLength(1)
-		expect(mintTokensResp.promises.reduce((r,cur)=>r+cur.amount,0)).toBe(1)
+		expect(mintTokensResp.promises.reduce((r, cur) => r + cur.amount, 0)).toBe(1)
+		const C_ = pointFromHex(mintTokensResp.promises[0].C_)
+		const unblinded = blindedMessages[0].unblind(C_, mint.getPublicKey(mintTokensResp.promises[0].amount))
+		expect(mint.verify(blindedMessages[0].r, unblinded.C))
 	})
 	test('test mint getKeys', () => {
 		const keys = mint.getKeys()

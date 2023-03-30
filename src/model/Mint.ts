@@ -24,9 +24,10 @@ export class Mint {
 		return BlindedSignature.newBlindedSignature({ id, amount, B_, privateKey: this.#privateKey })
 	}
 	// GET /keys
-	public getKeys() { return this.#keyset.getKeys() }
+	public getKeys(): { [k: string]: string } { return this.#keyset.getKeys() }
 	// GET /keysets
 	public getKeysets() { return { keysets: [this.#keyset.id] } }
+	public getPublicKey(amount: number) { return this.#keyset.keys[amount].getPublicKey() }
 	public isPaid(paymentHash: string): boolean { return this.#invoicer.isPaid(paymentHash) }
 	// POST /mint&payment_hash=
 	public mintTokens(_amount: number, _paymentHash: string, outputs: BlindedMessage[]): IMintTokensResp  {

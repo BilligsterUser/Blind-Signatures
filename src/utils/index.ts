@@ -1,5 +1,10 @@
+import { secp256k1 } from '@noble/curves/secp256k1'
+
 export function byteArrToBigInt(b: Uint8Array): bigint {
 	return BigInt(`0x${Buffer.from(b).toString('hex')}`)
+}
+export function pointFromHex(hex: string) {
+	return secp256k1.ProjectivePoint.fromHex(hex)
 }
 export function splitAmount(amount: number): number[] {
 	const result: number[] = []
