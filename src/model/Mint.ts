@@ -1,6 +1,7 @@
 import { ProjPointType } from '@noble/curves/abstract/weierstrass'
 import { hashToCurve } from '@noble/curves/secp256k1'
 import { IBlindedSignatureParam, IMintTokensResp, IRequestMintResp } from '.'
+import { uint8ArrToHex } from '../utils'
 import { BlindedMessage } from './BlindedMessage'
 import { BlindedSignature } from './BlindedSignature'
 import { Keyset } from './Keyset'
@@ -17,7 +18,7 @@ export class Mint {
 	readonly #invoicer: IInvoicer
 	constructor(privateKey: PrivateKey, derivationPath = '0/0/0/0', invoicer = FakeInvoicer, storage = FakeStorage) {
 		this.#privateKey = privateKey
-		this.#keyset = new Keyset(this.#privateKey.key.toString(), derivationPath)
+		this.#keyset = new Keyset(uint8ArrToHex(this.#privateKey.key), derivationPath)
 		// eslint-disable-next-line new-cap
 		this.#invoicer = new invoicer()
 		// eslint-disable-next-line new-cap
@@ -41,14 +42,16 @@ export class Mint {
 		// TODO handel errors
 		// if (!this.#invoicer.isPaid(paymentHash)) { return { error: 'not Paid' } }
 		// if (outputs.reduce((r, cur) => r + cur.amount, 0) > amount) { return { error: 'too much outputs' } }
+		// TODO mark payment as used
 		return {
 			promises: outputs
-				.map(x =>
+				// eslint-disable-next-line @typescript-eslint/naming-convention
+				.map(({amount, B_}) =>
 					BlindedSignature.newBlindedSignature({
-						amount: x.amount,
+						amount,
 						// eslint-disable-next-line @typescript-eslint/naming-convention
-						B_: x.B_,
-						privateKey: this.#keyset.keys[x.amount]
+						B_,
+						privateKey: this.#keyset.keys[amount]
 					}).toJSON()
 				)
 		}

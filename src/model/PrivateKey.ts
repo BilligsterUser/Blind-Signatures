@@ -13,7 +13,7 @@ export class PrivateKey {
 			this.#privateKey = this.#hashToPrivKey(hash)
 		}
 	}
-	#hashToPrivKey(hash: string | Uint8Array) {
+	#hashToPrivKey(hash: string | Uint8Array): Uint8Array {
 		const num = secp256k1.utils.normPrivateKeyToScalar(hash)
 		return numberToBytesBE(num, 32)
 	}

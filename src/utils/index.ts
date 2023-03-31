@@ -6,6 +6,7 @@ export function byteArrToBigInt(b: Uint8Array): bigint {
 export function pointFromHex(hex: string) {
 	return secp256k1.ProjectivePoint.fromHex(hex)
 }
+export function uint8ArrToHex(arr: Uint8Array) { return Buffer.from(arr).toString('hex') }
 export function splitAmount(amount: number): number[] {
 	const result: number[] = []
 	let total = 0
