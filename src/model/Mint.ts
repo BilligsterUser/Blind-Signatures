@@ -3,6 +3,7 @@ import { hashToCurve } from '@noble/curves/secp256k1'
 import { resolve } from 'path'
 import { IBlindedSignatureParam, IInfo, IMintTokensResp, IRequestMintResp } from '.'
 import { uint8ArrToHex } from '../utils'
+import { decodeInvoice } from '../utils/bolt11'
 import { BlindedMessage } from './BlindedMessage'
 import { BlindedSignature } from './BlindedSignature'
 import { Keyset } from './Keyset'
@@ -11,6 +12,8 @@ import { FakeInvoicer } from './lightning/FakeInvoicer'
 import { PrivateKey } from './PrivateKey'
 import { IStorage } from './storage'
 import { FakeStorage } from './storage/FakeStorage'
+
+
 export class Mint {
 	get privateKey() { return this.#privateKey }
 	readonly #storage: IStorage
@@ -24,6 +27,18 @@ export class Mint {
 		this.#invoicer = new invoicer()
 		// eslint-disable-next-line new-cap
 		this.#storage = new storage()
+	}
+	// GET /checkfees
+	public checkfees(pr: string) {
+		const { msats, paymentHash } = decodeInvoice(pr)
+		// check if it's internal
+		if (this.#storage.getPayment(paymentHash) !== undefined) {
+			// if(!this.#invoicer.isPaid(paymentHash))
+			return 0
+		}
+		// TODO load LightningReserveFeeMin & LightningFeePercent from config
+		// math.Max(Config.Lightning.Lnbits.LightningReserveFeeMin, float64(amountMsat) * Config.Lightning.Lnbits.LightningFeePercent / 1000))
+		return Math.ceil(Math.max(4000, msats * 1.0 / 100) / 1000)
 	}
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	public createBlindSignature({ id = '', amount = 0, B_ }: Omit<IBlindedSignatureParam, 'privateKey'>) {
@@ -42,7 +57,7 @@ export class Mint {
 		const pkg = require(resolve('.') + '/package.json')
 		const info: IInfo = {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions
-			version:`${pkg.name}/${pkg.version}`,
+			version: `${pkg.name}/${pkg.version}`,
 			contact: [],
 			description: '',
 			// eslint-disable-next-line @typescript-eslint/naming-convention

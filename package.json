@@ -86,6 +86,7 @@
 		"typescript": "^5.0.3"
 	},
 	"dependencies": {
-		"@noble/curves": "^0.9.1"
+		"@noble/curves": "^0.9.1",
+		"light-bolt11-decoder": "^3.0.0"
 	}
 }

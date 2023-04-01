@@ -1,2 +1,2 @@
 // TODO  config
-export {}
+export { }
