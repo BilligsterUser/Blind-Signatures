@@ -58,3 +58,15 @@ export interface IRequestMintResp{
 export interface IMintTokensResp {
 	promises:ISerializedBlindedSignature[]
 }
+
+export interface IInfo {
+	contact: string[][]
+	description: string
+	// eslint-disable-next-line @typescript-eslint/naming-convention
+	description_long: string
+	motd: string
+	name: string
+	nuts: string[]
+	pubkey: string
+	version: string
+}

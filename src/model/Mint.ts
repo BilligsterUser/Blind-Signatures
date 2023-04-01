@@ -1,6 +1,7 @@
 import { ProjPointType } from '@noble/curves/abstract/weierstrass'
 import { hashToCurve } from '@noble/curves/secp256k1'
-import { IBlindedSignatureParam, IMintTokensResp, IRequestMintResp } from '.'
+import { resolve } from 'path'
+import { IBlindedSignatureParam, IInfo, IMintTokensResp, IRequestMintResp } from '.'
 import { uint8ArrToHex } from '../utils'
 import { BlindedMessage } from './BlindedMessage'
 import { BlindedSignature } from './BlindedSignature'
@@ -34,6 +35,25 @@ export class Mint {
 	// GET /keysets
 	public getKeysets() { return { keysets: [this.#keyset.id] } }
 	public getPublicKey(amount: number) { return this.#keyset.keys[amount].getPublicKey() }
+	// GET /info
+	public info() {
+		// TODO read from config
+		// eslint-disable-next-line @typescript-eslint/no-unsafe-assignment, @typescript-eslint/no-var-requires
+		const pkg = require(resolve('.') + '/package.json')
+		const info: IInfo = {
+			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions
+			version:`${pkg.name}/${pkg.version}`,
+			contact: [],
+			description: '',
+			// eslint-disable-next-line @typescript-eslint/naming-convention
+			description_long: '',
+			motd: '',
+			name: 'Typescript Cashu mint',
+			nuts: [],
+			pubkey: this.#privateKey.getPublicKey().toHex()
+		}
+		return info
+	}
 	public isPaid(paymentHash: string): boolean { return this.#invoicer.isPaid(paymentHash) }
 	// POST /mint&payment_hash=
 	public mintTokens(_paymentHash: string, outputs: BlindedMessage[]): IMintTokensResp {
@@ -46,7 +66,7 @@ export class Mint {
 		return {
 			promises: outputs
 				// eslint-disable-next-line @typescript-eslint/naming-convention
-				.map(({amount, B_}) =>
+				.map(({ amount, B_ }) =>
 					BlindedSignature.newBlindedSignature({
 						amount,
 						// eslint-disable-next-line @typescript-eslint/naming-convention

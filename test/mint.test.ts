@@ -21,4 +21,9 @@ describe('Mint', () => {
 		const keys = mint.getKeys()
 		expect(Object.values(keys)).toHaveLength(64)
 	})
+	test('test mint info', () => {
+		const info = mint.info()
+		expect(info.name).toBe('Typescript Cashu mint')
+		expect(info.version).toBe('blind-signatures/0.0.0')
+	})
 })
