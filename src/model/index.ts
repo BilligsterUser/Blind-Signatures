@@ -7,7 +7,7 @@ export interface ISerializedBlindedSignature {
 	C_: string,
 	id?: string
 }
-export interface IBlindedSignatureParam{
+export interface IBlindedSignatureParam {
 	amount?: number,
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	B_: ProjPointType<bigint>,
@@ -19,7 +19,7 @@ export interface ISerializedBlindedMessage {
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	B_: string
 }
-export interface IBlindedMessageParam{
+export interface IBlindedMessageParam {
 	amount?: number,
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	B_?: ProjPointType<bigint>
@@ -31,7 +31,7 @@ export interface IProof {
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	C: string,
 	id?: string,
-	secret: number,
+	secret: string,
 	// script=: P2SHScript,
 }
 export interface IMint {
@@ -51,12 +51,33 @@ export interface ITokenV3 {
 	token: { mint: string, proofs: IProof[] }[]
 }
 
-export interface IRequestMintResp{
+export interface IRequestMintResp {
 	hash: string
 	pr: string,
 }
 export interface IMintTokensResp {
-	promises:ISerializedBlindedSignature[]
+	promises: ISerializedBlindedSignature[]
+}
+
+export interface IMeltReq {
+	outputs: ISerializedBlindedMessage[]
+	pr: string
+	proofs: IProof[]
+}
+export interface IMeltResp {
+	change?: ISerializedBlindedSignature[]
+	paid: boolean
+	preimage: string
+}
+
+export interface ISplitReq {
+	amount: number
+	outputs: ISerializedBlindedMessage[]
+	proofs: IProof[]
+}
+export interface ISplitResp {
+	fst: ISerializedBlindedSignature[]
+	snd: ISerializedBlindedSignature[]
 }
 
 export interface IInfo {

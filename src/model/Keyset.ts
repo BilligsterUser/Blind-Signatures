@@ -2,6 +2,7 @@
 // https://github.com/cashubtc/cashu/blob/main/docs/specs/01.md
 
 import { createHash } from 'crypto'
+import { config } from '../config'
 import { PrivateKey } from './PrivateKey'
 
 // https://github.com/cashubtc/cashu/blob/main/docs/specs/02.md
@@ -26,7 +27,7 @@ export class Keyset {
 		this.#deriveKeysetId()
 	}
 	#deriveKeys() {
-		for (let i = 0; i < 64; i++) {
+		for (let i = 0; i < config.maxOrder; i++) {
 			const hash = createHash('sha256')
 				.update(this.#seed + this.#derivationPath + i.toString())
 				.digest()
