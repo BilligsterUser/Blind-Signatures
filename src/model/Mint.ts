@@ -1,7 +1,10 @@
 import { ProjPointType } from '@noble/curves/abstract/weierstrass'
 import { hashToCurve } from '@noble/curves/secp256k1'
 import { resolve } from 'path'
-import { IBlindedSignatureParam, IInfo, IMeltReq, IMeltResp, IMintTokensResp, IRequestMintResp, ISplitReq, ISplitResp } from '.'
+import {
+	IBlindedSignatureParam, IInfo, IMeltReq, IMeltResp,
+	IRequestMintResp, ISplitReq, ISplitResp, IMintTokensResp
+} from '.'
 import { pointFromHex, splitAmount, uint8ArrToHex, verifyAmount, verifyNoDuplicateOutputs, verifyOutputs, verifySecret } from '../utils'
 import { decodeInvoice } from '../utils/bolt11'
 import { BlindedMessage } from './BlindedMessage'
@@ -91,8 +94,8 @@ export class Mint {
 		// TODO get hash and amount from db
 		// const amount = this.#storage.getPayment(paymentHash) || 0
 		// TODO handel errors
-		// if (!this.#invoicer.isPaid(paymentHash)) { return { error: 'not Paid' } }
-		// if (outputs.reduce((r, cur) => r + cur.amount, 0) > amount) { return { error: 'too much outputs' } }
+		// if (!this.#invoicer.isPaid(paymentHash)) { throw new Error('not Paid' } }
+		// if (outputs.reduce((r, cur) => r + cur.amount, 0) > amount) { throw new Error('too much outputs' } }
 		// TODO mark payment as used
 		return {
 			promises: outputs
@@ -116,20 +119,20 @@ export class Mint {
 	// POST /split
 	public split({ proofs, outputs, amount }: ISplitReq): ISplitResp {
 		if (!verifyAmount(amount)) {
-			// `invalid amount: ${amount}`"
+			throw new Error(`invalid amount: ${amount}`)
 		}
 		if (!proofs.every(verifySecret)) {
-			// bad secret
+			throw new Error('invalid secret')
 		}
 		if (!verifyNoDuplicateOutputs(outputs)) {
-			// "duplicate outputs"
+			throw new Error('duplicate outputs')
 		}
 		const total = proofs.reduce((r, c) => r + c.amount, 0)
 		if (!verifyOutputs(total, amount, outputs)) {
-			// "split of promises is not as expected."
+			throw new Error('split of promises is not as expected.')
 		}
 		if (total > amount) {
-			// "split amount is higher than the total sum."
+			throw new Error('split amount is higher than the total sum.')
 		}
 		// TODO  add used proofs to storage / Mark proofs as used
 		const outs = splitAmount(total - amount)

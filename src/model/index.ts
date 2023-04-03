@@ -91,3 +91,9 @@ export interface IInfo {
 	pubkey: string
 	version: string
 }
+
+export interface IApiError {
+	code?: number
+	detail?: string
+	error?: string
+}
