@@ -1,9 +1,25 @@
+import { randomBytes } from 'crypto'
 import { BlindedMessage, Mint, PrivateKey } from '../src'
 import { IProof } from '../src/model'
 import { uint8ArrToHex } from '../src/utils'
 
 
 describe('test crypto bdhke', () => {
+	test('test BlindedMessage random Bytes', () => {
+		// mint
+		const mint = new Mint(new PrivateKey())
+
+		// alice
+		const bm = BlindedMessage.newBlindedMessage({ secret: randomBytes(10) })  // blindedMessage
+		// mint
+		const bs = mint.createBlindSignature({ B_: bm.B_ })// BlindedSignature
+
+		// alice
+		const ub = bm.unblind(bs.C_, mint.privateKey.getPublicKey()) // unblinded
+
+		// mint proof
+		expect(mint.verify(bm.secret, ub.C, bm.amount))
+	})
 	test('test BlindedMessage from string', async () => {
 		// mint
 		const mint = new Mint(new PrivateKey())
