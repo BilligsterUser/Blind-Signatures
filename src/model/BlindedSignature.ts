@@ -14,12 +14,12 @@ export class BlindedSignature {
 		return input
 			.map(
 				// eslint-disable-next-line @typescript-eslint/naming-convention
-				({ id = '', amount = 0, B_, privateKey }) =>
+				({ id = '', amount = 1, B_, privateKey }) =>
 					new BlindedSignature(id, amount, B_.multiply(privateKey.toBigInt()))
 			)
 	}
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	public static newBlindedSignature({ id = '', amount = 0, B_, privateKey }: IBlindedSignatureParam) {
+	public static newBlindedSignature({ id = '', amount = 1, B_, privateKey }: IBlindedSignatureParam) {
 		return new BlindedSignature(id, amount, B_.multiply(privateKey.toBigInt()))
 	}
 	// eslint-disable-next-line @typescript-eslint/naming-convention

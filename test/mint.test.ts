@@ -16,7 +16,7 @@ describe('Mint', () => {
 		expect(mintTokensResp.promises.reduce((r, cur) => r + cur.amount, 0)).toBe(1)
 		const C_ = pointFromHex(mintTokensResp.promises[0].C_)
 		const unblinded = blindedMessages[0].unblind(C_, mint.getPublicKey(mintTokensResp.promises[0].amount))
-		expect(mint.verify(blindedMessages[0].r, unblinded.C))
+		expect(mint.verify(blindedMessages[0].secret, unblinded.C, blindedMessages[0].amount))
 	})
 	test('test mint getKeys', () => {
 		const keys = mint.getKeys()

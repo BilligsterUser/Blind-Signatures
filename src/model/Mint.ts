@@ -3,9 +3,10 @@ import { hashToCurve } from '@noble/curves/secp256k1'
 import { resolve } from 'path'
 import {
 	IBlindedSignatureParam, IInfo, IMeltReq, IMeltResp,
-	IRequestMintResp, ISplitReq, ISplitResp, IMintTokensResp
+	IMintTokensResp, IProof,
+	IRequestMintResp, ISplitReq, ISplitResp
 } from '.'
-import { pointFromHex, splitAmount, uint8ArrToHex, verifyAmount, verifyNoDuplicateOutputs, verifyOutputs, verifySecret } from '../utils'
+import { h2cToPoint, hexToUint8Arr, pointFromHex, splitAmount, uint8ArrToHex, verifyAmount, verifyNoDuplicateOutputs, verifyOutputs, verifySecret } from '../utils'
 import { decodeInvoice } from '../utils/bolt11'
 import { BlindedMessage } from './BlindedMessage'
 import { BlindedSignature } from './BlindedSignature'
@@ -44,9 +45,9 @@ export class Mint {
 		return { fee: Math.ceil(Math.max(4000, msats * 1.0 / 100) / 1000) }
 	}
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	public createBlindSignature({ id = '', amount = 0, B_ }: Omit<IBlindedSignatureParam, 'privateKey'>) {
+	public createBlindSignature({ id = '', amount = 1, B_ }: Omit<IBlindedSignatureParam, 'privateKey'>) {
 		// eslint-disable-next-line @typescript-eslint/naming-convention
-		return BlindedSignature.newBlindedSignature({ id, amount, B_, privateKey: this.#privateKey })
+		return BlindedSignature.newBlindedSignature({ id, amount, B_, privateKey: this.#keyset.keys[amount] })
 	}
 	// GET /keys
 	public getKeys(): { [k: string]: string } { return this.#keyset.getKeys() }
@@ -75,6 +76,9 @@ export class Mint {
 	public isPaid(paymentHash: string): boolean { return this.#invoicer.isPaid(paymentHash) }
 	// POST /melt
 	public melt({ pr, proofs, outputs }: IMeltReq): IMeltResp {
+		if (!proofs.every(p => this.verifyProofBdhk(p))) {
+			throw new Error('could not verify proofs.')
+		}
 		const pAmount = proofs.reduce((r, c) => r + c.amount, 0)
 		const { fee } = this.checkfees(pr)
 		const { msats } = decodeInvoice(pr)
@@ -149,7 +153,14 @@ export class Mint {
 		).map(x => x.toJSON())
 		return { fst, snd }
 	}
-	public verify(r: PrivateKey, unblinded: ProjPointType<bigint>) {
-		return hashToCurve(r.key).multiply(this.#privateKey.toBigInt()).equals(unblinded)
+	public verify(x: Uint8Array, unblinded: ProjPointType<bigint>, amount: number) {
+		return hashToCurve(x).multiply(this.#keyset.keys[amount].toBigInt()).equals(unblinded)
+	}
+	verifyProofBdhk(proof: IProof) {
+		const C = pointFromHex(proof.C)
+		const privKey = this.#keyset.keys[proof.amount]
+		const Y = h2cToPoint(hashToCurve(hexToUint8Arr(proof.secret)))
+		return C.equals(Y.multiply(privKey.toBigInt()))
+
 	}
 }
