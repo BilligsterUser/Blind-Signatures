@@ -78,6 +78,9 @@ export class Mint {
 		if (!proofs.every(p => this.verifyProofBdhk(p))) {
 			throw new Error('could not verify proofs.')
 		}
+		if (!proofs.every(p => this.verifyProofSpendable(p.secret))) {
+			throw new Error('tokens already spent.')
+		}
 		const pAmount = proofs.reduce((r, c) => r + c.amount, 0)
 		if (!verifyNoDuplicateOutputs(outputs)) {
 			throw new Error('duplicate outputs')
@@ -170,5 +173,8 @@ export class Mint {
 		const Y = h2cToPoint(hashToCurve(hexToUint8Arr(proof.secret)))
 		return C.equals(Y.multiply(privKey.toBigInt()))
 
+	}
+	public verifyProofSpendable(secret: string) {
+		return this.#storage.isSpendable(secret)
 	}
 }

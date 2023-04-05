@@ -42,10 +42,7 @@ export function verifyNoDuplicateProofs(proofs: IProof[]): boolean {
 	const secrets = proofs.map(p => p.secret)
 	return secrets.length === new Set(proofs.map(p => p.secret)).size
 }
-export function verifyProofSpendable(_proof: IProof) {
-	// TODO checkSpendable
-	return true
-}
+
 export function verifyAmount(amount: number) {
 	return !isNaN(amount) && amount > 0 && amount < 2 ** config.maxOrder
 }
@@ -69,9 +66,6 @@ export function verifyProofs(proofs: IProof[]): { err?: Error, result: boolean }
 	}
 	if (!verifyNoDuplicateProofs(proofs)) {
 		return { result: false, err: Error('duplicate proofs.') }
-	}
-	if (!proofs.every(verifyProofSpendable)) {
-		return { result: false, err: Error('tokens already spent.') }
 	}
 	return { result: true }
 }
