@@ -15,7 +15,7 @@ describe('test crypto bdhke', () => {
 		const bs = mint.createBlindSignature({ B_: bm.B_ })// BlindedSignature
 
 		// alice
-		const ub = bm.unblind(bs.C_, mint.privateKey.getPublicKey()) // unblinded
+		const ub = bm.unblind(bs.C_, mint.getPublicKey(bm.amount)) // unblinded
 
 		// mint proof
 		expect(mint.verify(bm.secret, ub.C, bm.amount))

@@ -6,7 +6,7 @@ import {
 	IMintTokensResp, IProof,
 	IRequestMintResp, ISplitReq, ISplitResp
 } from '.'
-import { h2cToPoint, hexToUint8Arr, pointFromHex, splitAmount, uint8ArrToHex, verifyAmount, verifyNoDuplicateOutputs, verifyOutputs, verifySecret } from '../utils'
+import { h2cToPoint, hexToUint8Arr, pointFromHex, splitAmount, uint8ArrToHex, verifyAmount, verifyNoDuplicateOutputs, verifyOutputs, verifyProofs, verifySecret } from '../utils'
 import { decodeInvoice } from '../utils/bolt11'
 import { BlindedMessage } from './BlindedMessage'
 import { BlindedSignature } from './BlindedSignature'
@@ -19,7 +19,6 @@ import { FakeStorage } from './storage/FakeStorage'
 
 
 export class Mint {
-	get privateKey() { return this.#privateKey }
 	readonly #storage: IStorage
 	readonly #privateKey: PrivateKey
 	readonly #keyset
@@ -36,7 +35,7 @@ export class Mint {
 	public checkfees(pr: string) {
 		const { msats, paymentHash } = decodeInvoice(pr)
 		// check if it's internal
-		if (this.#storage.getPayment(paymentHash) !== undefined) {
+		if (this.#storage.getPayment(paymentHash).amount) {
 			// if(!this.#invoicer.isPaid(paymentHash))
 			return { fee: 0 }
 		}
@@ -80,6 +79,11 @@ export class Mint {
 			throw new Error('could not verify proofs.')
 		}
 		const pAmount = proofs.reduce((r, c) => r + c.amount, 0)
+		if (!verifyNoDuplicateOutputs(outputs)) {
+			throw new Error('duplicate outputs')
+		}
+		const { err } = verifyProofs(proofs)
+		if (err) { throw err }
 		const { fee } = this.checkfees(pr)
 		const { msats } = decodeInvoice(pr)
 		if (pAmount + fee < msats / 1000) {
@@ -88,19 +92,22 @@ export class Mint {
 				error: 'provided proofs not enough for Lightning payment.'
 			}*/
 		}
-		// TODO add used proofs to storage
+		this.#storage.setSpend(...proofs.map(x => x.secret))
 		// TODO pay invoice
 		// TODO handel NUT-8 https://github.com/cashubtc/nuts/blob/main/08.md
 		return { paid: true, preimage: 'da225c115418671b64a67d1d9ea6a...' }
 	}
 	// POST /mint&payment_hash=
-	public mintTokens(_paymentHash: string, outputs: BlindedMessage[]): IMintTokensResp {
+	public mintTokens(paymentHash: string, outputs: BlindedMessage[]): IMintTokensResp {
+		if (!paymentHash) { throw new Error('no payment_hash provided.') }
 		// TODO get hash and amount from db
-		// const amount = this.#storage.getPayment(paymentHash) || 0
+		const { amount, issued } = this.#storage.getPayment(paymentHash)
+		if (!amount) { throw new Error('invoice not found.') }
+		if (issued) { throw new Error('tokens already issued for this invoice.') }
 		// TODO handel errors
-		// if (!this.#invoicer.isPaid(paymentHash)) { throw new Error('not Paid' } }
-		// if (outputs.reduce((r, cur) => r + cur.amount, 0) > amount) { throw new Error('too much outputs' } }
-		// TODO mark payment as used
+		if (!this.#invoicer.isPaid(paymentHash)) { throw new Error('not Paid') }
+		if (outputs.reduce((r, cur) => r + cur.amount, 0) > amount) { throw new Error('too much outputs') }
+		this.#storage.updatePayment(paymentHash)
 		return {
 			promises: outputs
 				// eslint-disable-next-line @typescript-eslint/naming-convention
@@ -138,7 +145,8 @@ export class Mint {
 		if (total > amount) {
 			throw new Error('split amount is higher than the total sum.')
 		}
-		// TODO  add used proofs to storage / Mark proofs as used
+		this.#storage.setSpend(...proofs.map(x => x.secret))
+
 		const outs = splitAmount(total - amount)
 		const B_1 = outputs.slice(0, outs.length)
 		const B_2 = outputs.slice(outs.length)
@@ -156,7 +164,7 @@ export class Mint {
 	public verify(x: Uint8Array, unblinded: ProjPointType<bigint>, amount: number) {
 		return hashToCurve(x).multiply(this.#keyset.keys[amount].toBigInt()).equals(unblinded)
 	}
-	verifyProofBdhk(proof: IProof) {
+	public verifyProofBdhk(proof: IProof) {
 		const C = pointFromHex(proof.C)
 		const privKey = this.#keyset.keys[proof.amount]
 		const Y = h2cToPoint(hashToCurve(hexToUint8Arr(proof.secret)))
