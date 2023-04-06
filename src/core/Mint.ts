@@ -1,19 +1,20 @@
 import { ProjPointType } from '@noble/curves/abstract/weierstrass'
 import { hashToCurve } from '@noble/curves/secp256k1'
 import { resolve } from 'path'
+import { config } from '../config'
 import {
 	IBlindedSignatureParam, IInfo, IMeltReq, IMeltResp,
 	IMintTokensResp, IProof,
 	IRequestMintResp, ISplitReq, ISplitResp
-} from '.'
+} from '../model'
+import { BlindedMessage } from '../model/BlindedMessage'
+import { BlindedSignature } from '../model/BlindedSignature'
+import { Keyset } from '../model/Keyset'
+import { PrivateKey } from '../model/PrivateKey'
 import { h2cToPoint, hexToUint8Arr, pointFromHex, splitAmount, uint8ArrToHex, verifyAmount, verifyNoDuplicateOutputs, verifyOutputs, verifyProofs, verifySecret } from '../utils'
 import { decodeInvoice } from '../utils/bolt11'
-import { BlindedMessage } from './BlindedMessage'
-import { BlindedSignature } from './BlindedSignature'
-import { Keyset } from './Keyset'
 import { IInvoicer } from './lightning'
 import { FakeInvoicer } from './lightning/FakeInvoicer'
-import { PrivateKey } from './PrivateKey'
 import { IStorage } from './storage'
 import { FakeStorage } from './storage/FakeStorage'
 
@@ -32,16 +33,19 @@ export class Mint {
 		this.#storage = new storage()
 	}
 	// POST /checkfees
-	public checkfees(pr: string) {
+	public checkfees(pr: string): { fee: number } {
 		const { msats, paymentHash } = decodeInvoice(pr)
 		// check if it's internal
 		if (this.#storage.getPayment(paymentHash).amount) {
 			// if(!this.#invoicer.isPaid(paymentHash))
 			return { fee: 0 }
 		}
-		// TODO load LightningReserveFeeMin & LightningFeePercent from config
-		// math.Max(Config.Lightning.Lnbits.LightningReserveFeeMin, float64(amountMsat) * Config.Lightning.Lnbits.LightningFeePercent / 1000))
-		return { fee: Math.ceil(Math.max(4000, msats * 1.0 / 100) / 1000) }
+		return {
+			fee: Math.ceil(Math.max(
+				config.lightning.reserveFee,
+				msats * config.lightning.feePercent / 100
+			) / 1000)
+		}
 	}
 	// eslint-disable-next-line @typescript-eslint/naming-convention
 	public createBlindSignature({ id = '', amount = 1, B_ }: Omit<IBlindedSignatureParam, 'privateKey'>) {
@@ -62,11 +66,11 @@ export class Mint {
 			// eslint-disable-next-line @typescript-eslint/no-unsafe-member-access, @typescript-eslint/restrict-template-expressions
 			version: `${pkg.name}/${pkg.version}`,
 			contact: [],
-			description: '',
+			description: config.info.description,
 			// eslint-disable-next-line @typescript-eslint/naming-convention
-			description_long: '',
-			motd: '',
-			name: 'Typescript Cashu mint',
+			description_long: config.info.descriptionLong,
+			motd: config.info.motd,
+			name: config.info.name,
 			nuts: [],
 			pubkey: this.#privateKey.getPublicKey().toHex()
 		}
@@ -107,7 +111,6 @@ export class Mint {
 		const { amount, issued } = this.#storage.getPayment(paymentHash)
 		if (!amount) { throw new Error('invoice not found.') }
 		if (issued) { throw new Error('tokens already issued for this invoice.') }
-		// TODO handel errors
 		if (!this.#invoicer.isPaid(paymentHash)) { throw new Error('not Paid') }
 		if (outputs.reduce((r, cur) => r + cur.amount, 0) > amount) { throw new Error('too much outputs') }
 		this.#storage.updatePayment(paymentHash)

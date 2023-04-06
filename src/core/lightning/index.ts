@@ -1,4 +1,4 @@
-import { IRequestMintResp } from '..'
+import { IRequestMintResp } from '../../model'
 
 export interface IInvoicer {
 	createInvoice(amount: number): IRequestMintResp

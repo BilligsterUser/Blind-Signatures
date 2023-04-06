@@ -1,4 +1,4 @@
-import { IRequestMintResp } from '..'
+import { IRequestMintResp } from '../../model'
 import { IInvoicer } from './index'
 export class FakeInvoicer implements IInvoicer {
 	public createInvoice(_amount: number): IRequestMintResp {

@@ -87,6 +87,7 @@
 	},
 	"dependencies": {
 		"@noble/curves": "^0.9.1",
+		"dotenv": "^16.0.3",
 		"light-bolt11-decoder": "^3.0.0"
 	}
 }

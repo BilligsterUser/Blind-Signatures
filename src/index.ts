@@ -1,6 +1,6 @@
+export { Mint } from './core/Mint.js'
+export { BlindedMessage } from './model/BlindedMessage.js'
 export { BlindedSignature } from './model/BlindedSignature.js'
 export { Keyset } from './model/Keyset.js'
 export { PrivateKey } from './model/PrivateKey.js'
 export { byteArrToBigInt } from './utils/index.js'
-export { Mint } from './model/Mint.js'
-export { BlindedMessage } from './model/BlindedMessage.js'

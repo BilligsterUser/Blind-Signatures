@@ -42,7 +42,6 @@ export function verifyNoDuplicateProofs(proofs: IProof[]): boolean {
 	const secrets = proofs.map(p => p.secret)
 	return secrets.length === new Set(proofs.map(p => p.secret)).size
 }
-
 export function verifyAmount(amount: number) {
 	return !isNaN(amount) && amount > 0 && amount < 2 ** config.maxOrder
 }
