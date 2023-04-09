@@ -1,6 +1,8 @@
 # Blind Signatures
 
 [![codecov](https://codecov.io/github/BilligsterUser/Blind-Signatures/branch/main/graph/badge.svg?token=VEr2pUyLw5)](https://codecov.io/github/BilligsterUser/Blind-Signatures)
+![Known Vulnerabilities](https://snyk.io/test/github/BilligsterUser/Blind-Signatures/badge.svg)
+![Libraries.io dependency status for GitHub repo](https://img.shields.io/librariesio/github/BilligsterUser/Blind-Signatures)
 ![example workflow](https://github.com/BilligsterUser/Blind-Signatures/actions/workflows/node.js.yml/badge.svg)
 ![ts](https://badgen.net/badge/Built%20With/TypeScript/blue)
 
