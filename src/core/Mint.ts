@@ -76,7 +76,7 @@ export class Mint {
 		}
 		return info
 	}
-	public isPaid(paymentHash: string): boolean { return this.#invoicer.isPaid(paymentHash) }
+	public isPaid(paymentHash: string): Promise<boolean> { return this.#invoicer.isPaid(paymentHash) }
 	// POST /melt
 	public melt({ pr, proofs, outputs }: IMeltReq): IMeltResp {
 		if (!proofs.every(p => this.verifyProofBdhk(p))) {
@@ -105,13 +105,13 @@ export class Mint {
 		return { paid: true, preimage: 'da225c115418671b64a67d1d9ea6a...' }
 	}
 	// POST /mint&payment_hash=
-	public mintTokens(paymentHash: string, outputs: BlindedMessage[]): IMintTokensResp {
+	public async mintTokens(paymentHash: string, outputs: BlindedMessage[]): Promise<IMintTokensResp> {
 		if (!paymentHash) { throw new Error('no payment_hash provided.') }
 		// TODO get hash and amount from db
 		const { amount, issued } = this.#storage.getPayment(paymentHash)
 		if (!amount) { throw new Error('invoice not found.') }
 		if (issued) { throw new Error('tokens already issued for this invoice.') }
-		if (!this.#invoicer.isPaid(paymentHash)) { throw new Error('not Paid') }
+		if (!await this.#invoicer.isPaid(paymentHash)) { throw new Error('not Paid') }
 		if (outputs.reduce((r, cur) => r + cur.amount, 0) > amount) { throw new Error('too much outputs') }
 		this.#storage.updatePayment(paymentHash)
 		return {
@@ -128,8 +128,8 @@ export class Mint {
 		}
 	}
 	// GET /mint&?amount=1
-	public requestMint(amount: number): IRequestMintResp {
-		const data = this.#invoicer.createInvoice(amount)
+	public async requestMint(amount: number): Promise<IRequestMintResp> {
+		const data = await this.#invoicer.createInvoice(amount)
 		this.#storage.savePayment(amount, data.hash)
 		return data
 	}
