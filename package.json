@@ -63,8 +63,8 @@
 		"@getify/eslint-plugin-proper-arrows": "^11.0.3",
 		"@types/jest": "^29.5.0",
 		"@types/node": "^18.15.11",
-		"@typescript-eslint/eslint-plugin": "^5.57.1",
-		"@typescript-eslint/parser": "^5.57.1",
+		"@typescript-eslint/eslint-plugin": "^5.58.0",
+		"@typescript-eslint/parser": "^5.58.0",
 		"eslint": "^8.38.0",
 		"eslint-plugin-compat": "^4.1.4",
 		"eslint-plugin-deprecate": "^0.7.0",
@@ -72,7 +72,7 @@
 		"eslint-plugin-eslint-plugin": "^5.0.8",
 		"eslint-plugin-html": "^7.1.0",
 		"eslint-plugin-import": "^2.27.5",
-		"eslint-plugin-jsdoc": "^40.1.2",
+		"eslint-plugin-jsdoc": "^41.1.2",
 		"eslint-plugin-json": "^3.1.0",
 		"eslint-plugin-node": "^11.1.0",
 		"eslint-plugin-promise": "^6.1.1",
@@ -86,7 +86,7 @@
 		"typescript": "^5.0.4"
 	},
 	"dependencies": {
-		"@noble/curves": "^0.9.1",
+		"@noble/curves": "^1.0.0",
 		"dotenv": "^16.0.3",
 		"light-bolt11-decoder": "^3.0.0",
 		"lnbits-ts": "^0.0.1"

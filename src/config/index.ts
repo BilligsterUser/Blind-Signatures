@@ -5,6 +5,7 @@ export const config = {
 	// TODO 64 maybe to big !!!
 	// 2**64 as number 18446744073709552000 - as bigint 18446744073709551616n
 	maxOrder: 64,
+	derivationPath: process.env.MINT_DERIVATION_PATH || '0/0/0/0',
 	info: {
 		name: process.env.MINT_INFO_NAME || 'Typescript Cashu mint',
 		description: process.env.MINT_INFO_DESCRIPTION || 'The short mint description',

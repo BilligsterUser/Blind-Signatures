@@ -24,7 +24,7 @@ export class Mint {
 	readonly #privateKey: PrivateKey
 	readonly #keyset
 	readonly #invoicer: IInvoicer
-	constructor(privateKey: PrivateKey, derivationPath = '0/0/0/0', invoicer = FakeInvoicer, storage = FakeStorage) {
+	constructor(privateKey: PrivateKey, derivationPath = config.derivationPath, invoicer = FakeInvoicer, storage = FakeStorage) {
 		this.#privateKey = privateKey
 		this.#keyset = new Keyset(uint8ArrToHex(this.#privateKey.key), derivationPath)
 		// eslint-disable-next-line new-cap
