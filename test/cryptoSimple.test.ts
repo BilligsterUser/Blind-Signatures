@@ -1,6 +1,7 @@
-import { hashToCurve, secp256k1 } from '@noble/curves/secp256k1'
+import {  secp256k1 } from '@noble/curves/secp256k1'
 import { randomBytes } from 'crypto'
 import { PrivateKey } from '../src/index.js'
+import { hashToCurve } from '../src/utils/index.js'
 
 test('test crypto simple', () => {
 	// mint

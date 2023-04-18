@@ -1,14 +1,27 @@
-import { H2CPoint } from '@noble/curves/abstract/hash-to-curve'
 import { ProjPointType } from '@noble/curves/abstract/weierstrass'
 import { secp256k1 } from '@noble/curves/secp256k1'
 import { config } from '../config'
 import { IProof, ISerializedBlindedMessage } from '../model'
+import { sha256 } from '@noble/hashes/sha256'
+import { bytesToHex } from '@noble/curves/abstract/utils'
 
 export function byteArrToBigInt(b: Uint8Array): bigint {
 	return BigInt(`0x${Buffer.from(b).toString('hex')}`)
 }
-export function h2cToPoint(h2c: H2CPoint<bigint>): ProjPointType<bigint> {
-	return secp256k1.ProjectivePoint.fromAffine(h2c.toAffine())
+
+export function hashToCurve(secret: Uint8Array): ProjPointType<bigint> {
+	let point: ProjPointType<bigint> | undefined
+	while (!point) {
+		const hash = sha256(secret)
+		const hashHex = bytesToHex(hash)
+		const pointX = '02' + hashHex
+		try {
+			point = pointFromHex(pointX)
+		} catch (error) {
+			secret = sha256(secret)
+		}
+	}
+	return point
 }
 export function pointFromHex(hex: string) {
 	return secp256k1.ProjectivePoint.fromHex(hex)

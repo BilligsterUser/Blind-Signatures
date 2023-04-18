@@ -1,5 +1,4 @@
 import { ProjPointType } from '@noble/curves/abstract/weierstrass'
-import { hashToCurve } from '@noble/curves/secp256k1'
 import { resolve } from 'path'
 import { config } from '../config'
 import {
@@ -11,7 +10,7 @@ import { BlindedMessage } from '../model/BlindedMessage'
 import { BlindedSignature } from '../model/BlindedSignature'
 import { Keyset } from '../model/Keyset'
 import { PrivateKey } from '../model/PrivateKey'
-import { h2cToPoint, hexToUint8Arr, pointFromHex, splitAmount, uint8ArrToHex, verifyAmount, verifyNoDuplicateOutputs, verifyOutputs, verifyProofs, verifySecret } from '../utils'
+import {  hashToCurve, hexToUint8Arr, pointFromHex, splitAmount, uint8ArrToHex, verifyAmount, verifyNoDuplicateOutputs, verifyOutputs, verifyProofs, verifySecret } from '../utils'
 import { decodeInvoice } from '../utils/bolt11'
 import { IInvoicer } from './lightning'
 import { FakeInvoicer } from './lightning/FakeInvoicer'
@@ -173,7 +172,7 @@ export class Mint {
 	public verifyProofBdhk(proof: IProof) {
 		const C = pointFromHex(proof.C)
 		const privKey = this.#keyset.keys[proof.amount]
-		const Y = h2cToPoint(hashToCurve(hexToUint8Arr(proof.secret)))
+		const Y = hashToCurve(hexToUint8Arr(proof.secret))
 		return C.equals(Y.multiply(privKey.toBigInt()))
 
 	}
