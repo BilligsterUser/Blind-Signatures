@@ -9,7 +9,7 @@ import { PrivateKey } from './PrivateKey'
 export class Keyset {
 	#seed: string
 	#derivationPath: string
-	#keys: { amount: string, privateKey: PrivateKey }[] = []
+	#keys: { amount: number, privateKey: PrivateKey }[] = []
 	#keysetId = ''
 	// GET /keysets
 	get id() { return this.#keysetId }
@@ -33,7 +33,7 @@ export class Keyset {
 				.digest()
 			const privateKey = new PrivateKey(hash)
 			this.#keys.push({
-				amount: BigInt(2 ** i).toString(10),
+				amount: Math.pow(2, i),
 				privateKey
 			})
 		}
