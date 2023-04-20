@@ -3,7 +3,7 @@ import { ProjPointType } from '@noble/curves/abstract/weierstrass'
 import { secp256k1 } from '@noble/curves/secp256k1'
 import { randomBytes } from 'crypto'
 import { IBlindedMessageParam, ISerializedBlindedMessage } from '.'
-import {  hashToCurve, splitAmount } from '../utils'
+import { hashToCurve, splitAmount } from '../utils'
 import { PrivateKey } from './PrivateKey'
 
 
@@ -13,14 +13,14 @@ export class BlindedMessage {
 			.map(x => BlindedMessage.newBlindedMessage({ amount: x }))
 	}
 	// eslint-disable-next-line @typescript-eslint/naming-convention
-	public static newBlindedMessage({ amount = 1, secret }: IBlindedMessageParam = {}): BlindedMessage {
+	public static newBlindedMessage({ amount = 1, secret, r }: IBlindedMessageParam = {}): BlindedMessage {
 		if (!secret) {
 			secret = randomBytes(32)
 		} else if (typeof secret === 'string') {
 			secret = new TextEncoder().encode(secret)
 		}
 		const Y = hashToCurve(secret)
-		const r = new PrivateKey()
+		if (!r) {r = new PrivateKey()}
 		const T = Y.add(secp256k1.ProjectivePoint.BASE.multiply(r.toBigInt())) // blindedMessage
 		// eslint-disable-next-line @typescript-eslint/naming-convention
 		return new BlindedMessage({ secret, r, amount, B_: T })
