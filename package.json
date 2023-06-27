@@ -89,6 +89,6 @@
 		"@noble/curves": "^1.0.0",
 		"dotenv": "^16.0.3",
 		"light-bolt11-decoder": "^3.0.0",
-		"lnbits-ts": "^0.0.1"
+		"lnbits-ts": "^0.0.2"
 	}
 }
